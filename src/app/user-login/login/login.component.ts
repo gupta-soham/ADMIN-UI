@@ -26,6 +26,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmationDialogsService } from 'src/app/core/services/dialog/confirmation.service';
 import { loginService } from '../loginService/login.service';
 import { HttpInterceptor } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 import { HttpServices } from 'src/app/core/services/http-services/http_services.service';
 
 @Component({
@@ -60,6 +61,7 @@ export class loginContentClassComponent implements OnInit, OnDestroy {
     public router: Router,
     private alertMessage: ConfirmationDialogsService,
     public HttpServices: HttpServices,
+    private cookieService: CookieService,
   ) {
     this._keySize = 256;
     this._ivSize = 128;
@@ -151,6 +153,8 @@ export class loginContentClassComponent implements OnInit, OnDestroy {
             if (response.data) {
               if (response.data.previlegeObj.length === 0) {
                 console.log(response.data, 'SUPERADMIN VALIDATED');
+                this.cookieService.set('Jwttoken', response.data.Jwttoken);
+                delete response.data.Jwttoken;
                 sessionStorage.setItem('authToken', response.data.key);
                 sessionStorage.setItem('Userdata', 'Super Admin');
                 sessionStorage.setItem('role', 'SUPERADMIN');

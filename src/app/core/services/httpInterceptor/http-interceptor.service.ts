@@ -36,6 +36,7 @@ import { throwError } from 'rxjs/internal/observable/throwError';
 import { ConfirmationDialogsService } from '../dialog/confirmation.service';
 import { SpinnerService } from '../spinnerService/spinner.service';
 import { environment } from 'src/environments/environment';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,7 @@ export class HttpInterceptorService implements HttpInterceptor {
     private router: Router,
     private confirmationService: ConfirmationDialogsService,
     private http: HttpClient,
+    private cookieService: CookieService,
     // private authService: AuthService
     // private setLanguageService: SetLanguageService
   ) {}
@@ -58,9 +60,10 @@ export class HttpInterceptorService implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const key: any = sessionStorage['authToken'];
     let modifiedReq = null;
+    const tokn = this.cookieService.get('Jwttoken');
     if (key !== undefined && key !== null) {
       modifiedReq = req.clone({
-        headers: req.headers.set('Authorization', key),
+        headers: req.headers.set('Authorization', key).set('Jwttoken', tokn),
       });
     } else {
       modifiedReq = req.clone({
